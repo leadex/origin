@@ -167,9 +167,11 @@ func (attacher *cinderDiskAttacher) WaitForAttach(spec *volume.Spec, devicePath 
 		case <-ticker.C:
 			glog.V(5).Infof("Checking Cinder disk %q is attached.", volumeID)
 			probeAttachedVolume()
+			glog.V(3).Infof("Should I attach = %t.", attacher.cinderProvider.ShouldTrustDevicePath())
 			if !attacher.cinderProvider.ShouldTrustDevicePath() {
 				// Using the Cinder volume ID, find the real device path (See Issue #33128)
 				devicePath = attacher.cinderProvider.GetDevicePath(volumeID)
+				glog.V(3).Infof("Found device path = %q for volume %q.", devicePath, volumeID)
 			}
 			exists, err := volumeutil.PathExists(devicePath)
 			if exists && err == nil {
